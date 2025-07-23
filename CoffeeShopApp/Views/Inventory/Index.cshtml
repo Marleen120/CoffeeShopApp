@@ -1,0 +1,159 @@
+﻿@model IEnumerable<CoffeeShopApp.Models.Inventory>
+@{
+    ViewBag.Title = "Manage Inventory";
+}
+
+<div class="inventory-wrapper">
+    <h2 class="inventory-title">Manage Inventory</h2>
+
+    <p>
+        @Html.ActionLink("Add New Item", "Create", null, new { @class = "btn add-btn" })
+    </p>
+
+    <div class="table-container">
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Unit</th>
+                    <th>Price</th>
+                    <th>Last Updated</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Unit</td>
+                        <td>@item.Price</td>
+                        <td>@item.LastUpdated.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "action-btn edit-btn" })
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "action-btn delete-btn" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #fdfaf6;
+        margin: 0;
+        padding: 0;
+    }
+
+    .inventory-wrapper {
+        max-width: 1100px;
+        margin: 40px 0;
+        padding: 30px;
+    }
+
+    .inventory-title {
+        font-size: 30px;
+        text-align: center;
+        color: #4C2918;
+        margin: -30px 0 10px 0;
+        letter-spacing: 1px;
+        text-shadow: 1px 1px 2px white;
+    }
+    .inventory-table thead {
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .add-btn {
+        background-color: #4C2918;
+        color: white !important;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        text-decoration: none;
+        transition: background 0.3s;
+        margin-bottom:10px;
+        margin-top:20px;
+    }
+
+        .add-btn:hover {
+            background-color: #6d4c41;
+            color: white !important;
+        }
+
+    .table-container {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        overflow-x: auto;
+    }
+
+    .inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+    }
+
+        .inventory-table th {
+            background-color: #d7ccc8;
+            color: #3e2723;
+            font-weight: 600;
+            padding: 14px;
+            text-align: center;
+            border-bottom: 2px solid #bbb;
+        }
+
+        .inventory-table td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            color: #4e342e;
+        }
+
+        .inventory-table tbody tr:hover {
+            background-color: #f5f5f5;
+            transition: 0.2s;
+        }
+
+    .action-btn {
+        padding: 6px 12px;
+        margin: 0 4px;
+        border-radius: 6px;
+        font-size: 14px;
+        text-decoration: none;
+        color: white;
+        display: inline-block;
+    }
+
+    .edit-btn {
+        background-color: black;
+    }
+
+    .delete-btn {
+        background-color: darkred;
+    }
+
+    .edit-btn:hover {
+        background-color: dimgrey;
+    }
+
+    .delete-btn:hover {
+        background-color: #BA0E08;
+    }
+    .action-btn:hover,
+    .action-btn:focus,
+    .action-btn:active {
+        color: white ;
+        text-decoration: none !important;
+    }
+  
+
+
+</style>

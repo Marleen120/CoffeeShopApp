@@ -1,0 +1,121 @@
+﻿@model CoffeeShopApp.Models.Inventory
+@{
+    ViewBag.Title = "Add Inventory Item";
+}
+
+<div class="form-wrapper">
+    <h2 class="text-center mb-4 inventory-heading">@ViewBag.Title</h2>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.ProductName, "Product Name")
+            @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control", required = "required" })
+            @Html.ValidationMessageFor(m => m.ProductName, "", new { @class = "text-white" })
+        </div>
+
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.Quantity)
+            @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", type = "number", required = "required", min = "1" })
+            @Html.ValidationMessageFor(m => m.Quantity, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.Unit)
+            @Html.TextBoxFor(m => m.Unit, new { @class = "form-control", required = "required" })
+            @Html.ValidationMessageFor(m => m.Unit, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.Price)
+            @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", required = "required", min = "1" })
+            @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+        </div>
+
+        <button type="submit" class="btn black-btn d-block mx-auto">Save</button>
+    }
+</div>
+
+<style>
+    body {
+        background: url('/Content/images/BG.jpg') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .black-btn {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+        .black-btn:hover {
+            background-color: #333;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transform: scale(1.03);
+        }
+
+    .form-wrapper {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px 30px;
+        background-color: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(12px);
+        border: 2px solid black;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-group {
+        display: grid;
+        justify-items: center;
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            width: 80%;
+            text-align: left;
+            color: white;
+            text-shadow: 1px 1px 8px black;
+        }
+
+    .form-control {
+        width: 80%;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    .text-white {
+        text-align: center;
+        width: 80%;
+        margin-top: 8px;
+        font-size: 0.9em;
+    }
+
+    .btn-success {
+        display: block;
+        margin: 30px auto 0;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .inventory-heading {
+        font-size: 26px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 2px 2px 8px #000000;
+        margin-bottom: 25px;
+    }
+</style>

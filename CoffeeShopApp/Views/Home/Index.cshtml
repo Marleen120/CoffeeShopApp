@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "Workspace";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="dashboard-container" id="dashboardContainer">
+    <div class="dashboard-overlay"></div>
+
+    <!-- Video Banner -->
+    <video autoplay muted loop playsinline style="width: 100%; max-height: 420px; border-radius: 12px; margin-bottom: 30px; object-fit: cover;">
+        <source src="~/Content/videos/videoplaybackk.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+    </video>
+
+    <p class="dashboard-subtitle">Welcome back to the heart of The Coffee Cottage — freshly brewed updates, just for you.</p>
+
+    <!-- GRAPH -->
+    <div class="chart-card">
+        <h3 class="chart-title">Today's Most Sold Products</h3>
+        <canvas id="todayChart" height="350"></canvas>
+    </div>
+
+    <!-- Feature Boxes -->
+    <div class="feature-cards">
+        <a href="@Url.Action("Index", "Inventory")" class="feature-box">
+            <img src="~/Content/images/inventory.png" alt="Inventory" class="feature-img" />
+            <div class="feature-title">Manage Inventory</div>
+        </a>
+
+        <a href="@Url.Action("Index", "Orders")" class="feature-box">
+            <img src="~/Content/images/orders.png" alt="Orders" class="feature-img" />
+            <div class="feature-title">Manage Orders</div>
+        </a>
+
+        <a href="@Url.Action("Reports", "Home")" class="feature-box">
+            <img src="~/Content/images/reports.png" alt="Reports" class="feature-img" />
+            <div class="feature-title">Review Reports</div>
+        </a>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    fetch('/Home/TodaySalesChart')
+        .then(res => res.json())
+        .then(raw => {
+            const labels = raw.map(x => x.ProductName);
+            const values = raw.map(x => x.TotalSold);
+
+            const canvas = document.getElementById('todayChart');
+            const ctx = canvas.getContext('2d');
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#B17F84'); // top
+            gradient.addColorStop(1, '#E3B9BD'); // bottom
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Units Sold',
+                        data: values,
+                        backgroundColor: gradient,
+                        borderColor: '#5E2D2D',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Quantity Sold',
+                                color: 'black',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: { color: 'black' },
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Product Name',
+                                color: 'black',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: { color: 'black' },
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' }
+                        }
+                    }
+                }
+            });
+        });
+</script>
+
+<link rel="stylesheet" href="~/Content/Admin.css" />

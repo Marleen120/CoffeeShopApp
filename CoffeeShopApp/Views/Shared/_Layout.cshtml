@@ -1,0 +1,101 @@
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"].ToString();
+    var currentAction = ViewContext.RouteData.Values["action"].ToString();
+    bool isLoginPage = currentController == "Account" && currentAction == "Login";
+}
+@*getting current controller and its action*@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+  
+    <link href="@Url.Content("~/Content/Admin.css")" rel="stylesheet" />
+    @RenderSection("Styles", required: false)
+</head>
+
+<body style="min-height: 100vh;">
+
+    @* Sidebar & Hamburger  *@
+    @if (!isLoginPage)
+    {
+        <!--  Hamburger Menu -->
+        <div class="hamburger-menu" onclick="toggleSidebar()">&#9776;</div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <span class="sidebar-close" onclick="toggleSidebar()">✕</span>
+            <h3 class="sidebar-title">The Coffee Cottage</h3>
+            <ul class="sidebar-nav">
+                <li><a href="@Url.Action("Insights", "Dashboard")">Insights</a></li>
+            </ul>
+        </div>
+    }
+
+    <div class="dashboard-container" id="dashboardContainer">
+
+        @*  Navbar  *@
+        @if (!isLoginPage)
+        {
+            <nav class="navbar custom-navbar">
+                <div class="container d-flex justify-content-between align-items-center">
+                    <a class="navbar-brand" href="@Url.Action("Index", "Home")">The Coffee Cottage</a>
+                    <ul class="navbar-nav d-flex flex-row">
+                        <li class="nav-item me-4">
+                            @Html.ActionLink("Workspace", "Index", "Home", null, new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item me-4">
+                            @Html.ActionLink("Logout", "Logout", "Account", null, new { @class = "nav-link " })
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        }
+
+        <!--  Main Body -->
+        <div class="container body-content">
+            @RenderBody() 
+
+            @*view replaces it*@
+        </div>
+
+        <!--  Footer  -->
+        @if (currentController == "Home" && currentAction == "Index")
+        {
+            <footer class="admin-footer">
+                <div class="footer-content">
+                    <p>&copy; @DateTime.Now.Year The Coffee Cottage. All rights reserved.</p>
+                </div>
+            </footer>
+        }
+
+    </div>
+
+
+    <!-- Scripts -->
+
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <!--  Sidebar Toggle  -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger-menu');
+            const dashboard = document.getElementById('dashboardContainer');
+
+            sidebar.classList.toggle('active');
+            dashboard.classList.toggle('shifted');
+            hamburger.style.display = sidebar.classList.contains('active') ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>

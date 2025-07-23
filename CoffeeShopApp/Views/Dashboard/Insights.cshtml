@@ -1,0 +1,228 @@
+﻿@model List<CoffeeShopApp.Models.ProductStatsViewModel>
+
+@{
+    ViewBag.Title = "Insights";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int maxQty = 0;
+    string productNames = "No data";
+
+    if (Model != null && Model.Any())
+    {
+        maxQty = Model.Max(x => x.Total);
+        var topProducts = Model.Where(x => x.Total == maxQty).ToList();
+        productNames = string.Join(", ", topProducts.Select(p => p.Product));
+    }
+
+}
+
+<div class="dashboard-wrapper">
+    <div class="dashboard-layout">
+        <!-- Sales chart -->
+        <div class="chart-section">
+            <h4>Sales Overview</h4>
+            <canvas id="salesChart"></canvas>
+        </div>
+
+        <!--  Total Orders -->
+        <div class="info-panel">
+            <div class="card-grid">
+                <div class="summary-card">
+                    <h4>Total Orders</h4>
+                    <div class="circle-container">
+                        <div class="circle-value">@ViewBag.TotalOrders</div>
+                    </div>
+                </div>
+                <!-- Total Sales -->
+
+                <div class="summary-card total-sales-card">
+                    <h4>Total Sales</h4>
+                    <p>Rs. @ViewBag.TotalSales</p>
+                </div>
+
+                <!-- Daily Orders Goal -->
+                <div class="goal-box">
+                    <h5>Goal</h5>
+                    <div class="goal-title">Daily Orders Goal</div>
+                    <div class="circle-value">78%</div>
+                </div>
+
+                <div class="goal-box">
+
+                    <!--Top Product-->
+
+                    <h5>Top Product(s)</h5>
+                    <div class="goal-title">@productNames</div>
+                    <div class="circle-value">@maxQty</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+    fetch('/Dashboard/MonthlySalesChart')
+        .then(res => res.json())
+        .then(data => {
+            const labels = data.map(x => x.Month);
+            const values = data.map(x => x.Total);
+            
+            const ctxLine = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sales (Rs.)',
+                        data: values,
+                        borderColor: '#243B55',
+                        backgroundColor: '#243B55',
+                        tension: 0.4,
+                        fill: true,
+                         pointRadius: 4,          
+                        pointHoverRadius: 7 ,   
+                        pointBackgroundColor: 'white',   
+                        pointBorderColor: 'black',          
+                        pointBorderWidth: 2,          
+
+
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    interaction: {
+                        mode: 'nearest',    
+                        intersect: false    
+                    },
+
+                    plugins: {
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: ctx => `Rs. ${ctx.parsed.y.toLocaleString()}`
+                            }
+                        }
+                    },
+
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+
+            });
+        });
+</script>
+
+
+<style>
+    body {
+        background: #f5f7fb;
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dashboard-wrapper {
+        padding: 40px 60px;
+        color: #333;
+        background: #f5f7fb;
+        border-radius: 20px;
+    }
+
+    .dashboard-layout {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .chart-section {
+        flex: 3;
+        min-width: 500px;
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 40px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        min-height: 400px;
+        margin-top: 20px;
+        margin-right: 40px;
+    }
+
+    .info-panel {
+        flex: 1.4;
+        min-width: 400px;
+    }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        width: 105%;
+    }
+
+    .summary-card,
+    .goal-box {
+        background: linear-gradient(135deg, #B17F84, #E3B9BD);
+        padding: 35px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        height: 210px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+        .summary-card h4,
+        .goal-box h5 {
+            font-size: 20px; 
+            font-weight: 500;
+        }
+
+
+        .summary-card p {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+
+    .goal-title {
+        font-size: 14px;
+        color: black;
+        margin-top: 8px;
+    }
+
+    .circle-value {
+        width: 60px;
+        height: 60px;
+        background: #000;
+        border-radius: 50%;
+        line-height: 60px;
+        font-weight: bold;
+        text-align: center;
+        color: #fff;
+        font-size: 22px;
+        margin-top: 12px;
+    }
+    .total-sales-card h4 {
+        margin-bottom: 30px;
+    }
+
+    .circle-container {
+        margin-top: 20px;
+    }
+
+    #salesChart {
+        height: 300px !important;
+        max-width: 100%;
+    }
+</style>

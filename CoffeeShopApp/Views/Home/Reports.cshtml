@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Reports";
+    var reportType = Request.QueryString["type"]; //which report to show based on query string
+}
+
+<style>
+    /*  Button to select report type*/
+    .report-option-btn { 
+        background-color: #4CAF50;
+        color: white !important;
+        padding: 10px 20px;
+        margin: 20px 15px;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none !important;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+    }
+
+        .report-option-btn:hover {
+            background-color: #388E3C;
+            color: white !important;
+        }
+</style>
+
+<h2 style="text-align:center;">Manage Reports</h2>
+
+<div style="text-align:center; margin-bottom: 30px;">
+    <a href="@Url.Action("Reports", "Home", new { type = "sales" })" class="report-option-btn">Sales by Product</a>
+    <a href="@Url.Action("Reports", "Home", new { type = "inventory" })" class="report-option-btn">Inventory Levels</a>
+</div>
+
+@if (reportType == "sales")
+{
+    <h3 style="text-align:center;">Sales by Product</h3>
+    <canvas id="salesChart" width="300" height="140"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    //to make chart 
+
+    <script>
+        fetch('/Home/SalesChart')
+            .then(res => res.json())
+            .then(data => {
+                const labels = data.map(item => item.ProductName);
+                const values = data.map(item => item.TotalSold);
+
+                new Chart(document.getElementById('salesChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Units Sold',
+                            data: values,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Units Sold' },
+                                ticks: {
+                                    color: 'black'
+                                }
+                            },
+                            x: {
+                                title: { display: true, text: 'Product Name' },
+                                ticks: {
+                                    color: 'black'
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+}
+else if (reportType == "inventory")
+{
+    <h3 style="text-align:center;">Inventory Levels</h3>
+    <canvas id="inventoryChart" width="400" height="200"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        fetch('/Home/InventoryChartData')
+            .then(res => res.json())
+            .then(data => {
+                const labels = data.map(item => item.ProductName);
+                const values = data.map(item => item.Quantity);
+
+                new Chart(document.getElementById('inventoryChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Quantity in Stock',
+                            data: values,
+                            backgroundColor: '#E7C585',
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Quantity' },
+                                ticks: {
+                                    color: 'black'
+                                }
+                            },
+                            x: {
+                                title: { display: true, text: 'Product Name' },
+                                ticks: {
+                                    color: 'black',
+                                    
+                                }
+                            
+
+                            
+
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+}

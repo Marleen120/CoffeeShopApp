@@ -1,0 +1,100 @@
+﻿@model CoffeeShopApp.Models.Order
+
+<div class="delete-wrapper">
+    <h2 class="delete-heading">Delete Order</h2>
+    <p class="delete-confirm">Are you sure you want to delete this order?</p>
+
+    <div class="order-info">
+        <p><strong>Customer:</strong> @Model.CustomerName</p>
+
+        @foreach (var item in Model.OrderItems)
+        {
+            <div class="order-item">
+                <p><strong>Product:</strong> @item.ProductName</p>
+                <p><strong>Quantity:</strong> @item.Quantity</p>
+                <p><strong>Unit Price:</strong> @item.UnitPrice</p>
+                <p><strong>Total:</strong> @(item.Quantity * item.UnitPrice)</p>
+            </div>
+            <hr />
+        }
+    </div>
+
+    @using (Html.BeginForm("Delete", "Orders", new { id = Model.Id }, FormMethod.Post))
+    {
+        <div class="btn-group">
+            <button class="btn btn-danger confirm-btn" type="submit">Yes, Delete</button>
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary cancel-btn" })
+        </div>
+    }
+</div>
+
+<style>
+    .delete-wrapper {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 40px;
+        background-color: #fff5f5;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .delete-heading {
+        color: #8b0000;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .delete-confirm {
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .order-info p {
+        margin: 5px 0;
+        color: #333;
+    }
+
+    .order-item {
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #fff0f0;
+        border-radius: 8px;
+    }
+
+    .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+
+    .confirm-btn {
+        background-color: darkred;
+        border: none;
+        padding: 10px 5px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 600;
+        margin-right: 10px;
+
+    }
+
+    .cancel-btn {
+        background-color: #ccc;
+        color: #333;
+        padding: 10px 5px;
+        
+        text-decoration: none;
+    }
+
+    .confirm-btn:hover {
+        background-color: #ba0e08;
+    }
+
+    .cancel-btn:hover {
+        background-color: #bbb;
+    }
+</style>

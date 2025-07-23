@@ -1,0 +1,188 @@
+﻿@model CoffeeShopApp.Models.Order
+@{
+    ViewBag.Title = "Create Order";
+}
+
+<div class="form-wrapper">
+    <h2 class="text-center mb-4 create-heading">@ViewBag.Title</h2>
+
+    @using (Html.BeginForm("Create", "Orders", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.CustomerName, "Customer Name")
+            @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control", name = "customerName", required = "required" })
+        </div>
+
+        
+        <div class="form-group mb-3">
+            <label>Product Name</label>
+            <select name="productNames" class="form-control product-dropdown" id="ProductDropdown" required>
+                @foreach (var item in ViewBag.ProductList as IEnumerable<SelectListItem>)
+                {
+                    <option value="@item.Text">@item.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Quantity</label>
+            <input type="number" name="quantities" class="form-control" min="1" required />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Unit Price</label>
+            <input type="text" class="form-control" name="unitPrices" readonly id="PriceBox" />
+        </div>
+
+        
+        <div id="additionalProducts"></div>
+
+       
+        <div class="form-group mb-3">
+            <button type="button" class="btn black-btn" onclick="addProduct()">Add Another Product</button>
+        </div>
+
+        
+        <button type="submit" class="btn black-btn d-block mx-auto">Save</button>
+    }
+</div>
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Load price for first product
+        $('#ProductDropdown').change(function () {
+            var productName = $(this).val();
+            if (productName) {
+                $.get('/Orders/GetPrice', { productName: productName }, function (data) {
+                    $('#PriceBox').val(data);
+                });
+            } else {
+                $('#PriceBox').val('');
+            }
+        });
+
+       
+        function addProduct() {
+            const rowIndex = $('#additionalProducts .form-group').length / 3;
+            const options = $('#ProductDropdown').html();
+
+            const newFields = `
+                        <div class="form-group mb-3">
+                            <label>Product Name</label>
+                            <select name="productNames" class="form-control dynamic-product" data-index="${rowIndex}" required>
+                                ${options}
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Quantity</label>
+                            <input type="number" name="quantities" class="form-control" min="1" required />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Unit Price</label>
+                            <input type="text" class="form-control dynamic-price" name="unitPrices" readonly id="price-${rowIndex}" />
+                        </div>
+                    `;
+            $('#additionalProducts').append(newFields);
+        }
+
+        
+        $(document).on('change', '.dynamic-product', function () {
+            const selectedProduct = $(this).val();
+            const index = $(this).data('index');
+            if (selectedProduct) {
+                $.get('/Orders/GetPrice', { productName: selectedProduct }, function (price) {
+                    $(`#price-${index}`).val(price);
+                });
+            } else {
+                $(`#price-${index}`).val('');
+            }
+        });
+    </script>
+}
+
+<style>
+    body {
+        background: url('/Content/images/BG.jpg') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .black-btn {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+        .black-btn:hover {
+            background-color: #333;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transform: scale(1.03);
+        }
+
+    .form-wrapper {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px 30px;
+        background-color: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(12px);
+        border: 2px solid black;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-group {
+        display: grid;
+        justify-items: center;
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 12px;
+            width: 80%;
+            text-align: left;
+            color: white;
+            text-shadow: 1px 1px 8px black;
+        }
+
+    .form-control {
+        width: 80%;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    .text-white {
+        text-align: right;
+        width: 80%;
+        margin-top: 6px;
+        font-size: 0.9em;
+    }
+
+    .btn-success {
+        display: block;
+        margin: 30px auto 0;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .create-heading {
+        font-size: 26px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 2px 2px 8px #000000;
+        margin-bottom: 25px;
+    }
+</style>

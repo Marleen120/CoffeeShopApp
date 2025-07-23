@@ -1,0 +1,253 @@
+﻿@model CoffeeShopApp.Models.Order
+
+@{
+    ViewBag.Title = "Edit Order";
+    var orderItems = Model.OrderItems.ToList();
+    var productList = ViewBag.ProductNames as List<string>;
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="container-edit">
+    @using (Html.BeginForm("Edit", "Orders", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.CustomerName)
+            @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control", required = "required" })
+        </div>
+
+        <h4>Existing Order Items</h4>
+        <div id="orderItemsContainer">
+            @for (int i = 0; i < orderItems.Count; i++)
+            {
+                <div class="form-group existing-item">
+                    @Html.Hidden("OrderItems[" + i + "].Id", orderItems[i].Id)
+                    @Html.Hidden("OrderItems[" + i + "].OrderId", orderItems[i].OrderId)
+
+
+                    @*existing product*@
+                    <label>Product Name</label>
+                    <select name="OrderItems[@(i)].ProductName" class="form-control" required>
+                        @foreach (var product in productList)
+                        {
+                            <option value="@product" @(product == orderItems[i].ProductName ? "selected" : "")>@product</option>
+                        }
+                    </select>
+
+                    <label>Quantity</label>
+                    <input type="number" name="OrderItems[@(i)].Quantity" value="@orderItems[i].Quantity" class="form-control" min="1" required />
+
+                    <label>Unit Price</label>
+                    <input type="text" value="@orderItems[i].UnitPrice" class="form-control" readonly />
+                    <input type="hidden" name="OrderItems[@(i)].UnitPrice" value="@orderItems[i].UnitPrice" />
+
+                    <button type="button" class="btn btn-danger remove-item mt-2">Remove</button>
+                </div>
+            }
+        </div>
+
+        <hr />
+        <h4>Add New Products</h4>
+        <div id="newItemsContainer"></div>
+
+        <button type="button" class="btn btn-secondary mb-1" onclick="addNewItem()">+ Add Product</button>
+        <button type="submit" class="btn btn-update">Update</button>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        const products = @Html.Raw(Json.Encode(productList));//c# list to js array
+
+        function addNewItem() {
+            let options = "";
+            for (let i = 0; i < products.length; i++) {
+                options += `<option value="${products[i]}">${products[i]}</option>`;
+            }
+            //dropdown for new product 
+            const html = `
+                <div class="form-group new-item mt-3">
+                    <label>Product Name</label>
+                    <select name="newProductNames" class="form-control product-select" required>
+                        <option disabled selected>Select product</option>
+                        ${options}
+                    </select>
+
+                    <label>Quantity</label>
+                    <input type="number" name="newQuantities" class="form-control" min="1" required />
+
+                    <label>Unit Price</label>
+                    <input type="text" name="newUnitPrices" class="form-control unit-price" readonly />
+
+                    <button type="button" class="btn btn-danger remove-item mt-2">Remove</button>
+                </div>
+            `;
+
+            document.getElementById("newItemsContainer").insertAdjacentHTML('beforeend', html);
+
+            $(".product-select").last().change(function () {
+                const selectedProduct = $(this).val();
+                const priceInput = $(this).closest(".new-item").find(".unit-price");
+
+                $.ajax({
+                    url: '@Url.Action("GetPrice", "Orders")',
+                    type: 'GET',
+                    data: { productName: selectedProduct },
+                    success: function (price) {
+                        priceInput.val(price ?? 0);
+                    },
+                    error: function () {
+                        alert("Could not fetch price.");
+                    }
+                });
+            });
+        }
+
+        $(document).on("click", ".remove-item", function () {
+            $(this).closest(".existing-item, .new-item").remove();
+        });
+    </script>
+}
+
+<style>
+    body {
+        background-color: #fdfaf6;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .btn-update {
+        background-color: #4C2918; 
+        color: #fff;
+        border: none;
+        padding: 10px 22px;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .btn-update:hover,
+        .btn-update:focus,
+        .btn-update:active {
+            background-color: #6d4c41; 
+            color:white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            outline: none;
+        }
+
+
+    h2 {
+        color: #4C2918;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    h4 {
+        margin-top: 40px;
+        color: #3e2723;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 10px 12px;
+        font-size: 15px;
+        box-shadow: none;
+        transition: border-color 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #8D6E63;
+            box-shadow: 0 0 5px rgba(141, 110, 99, 0.3);
+        }
+
+    .existing-item {
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .new-item {
+        padding: 20px;
+        border: 1px dashed #bca9a2;
+        border-radius: 12px;
+        background-color: #f9f3f0;
+        margin-bottom: 20px;
+    }
+    
+
+    .btn-primary {
+        background-color: #4C2918;
+        border: none;
+        padding: 10px 20px;
+        font-size: 15px;
+        border-radius: 8px;
+    }
+
+        .btn-primary:hover {
+            background-color: #6d4c41;
+        }
+
+    .btn-secondary {
+        background-color: #8D6E63;
+        border: none;
+        padding: 10px 20px;
+        font-size: 15px;
+        border-radius: 8px;
+        color: #fff;
+        margin-right: 10px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #795548;
+        }
+
+    .btn-danger {
+        background-color: #BA0E08;
+        border: none;
+        padding: 8px 14px;
+        color: white;
+        border-radius: 6px;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+
+        .btn-danger:hover {
+            background-color: darkred;
+        }
+
+    label {
+        font-weight: 600;
+        color: #5D4037;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .container-edit {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    hr {
+        border-top: 2px solid #d7ccc8;
+    }
+</style>

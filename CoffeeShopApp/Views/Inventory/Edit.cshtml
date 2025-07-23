@@ -1,0 +1,113 @@
+﻿@model CoffeeShopApp.Models.Inventory
+
+@{
+    ViewBag.Title = "Update Inventory Item";
+}
+
+<h2> @ViewBag.Title</h2>
+
+<div class="container-edit">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.ProductName, "Product Name")
+            @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control", required = "required" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Quantity)
+            @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", required = "required", min = "1", type = "number" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Unit)
+            @Html.TextBoxFor(m => m.Unit, new { @class = "form-control", required = "required" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Price)
+            @Html.TextBoxFor(m => m.Price, new { @class = "form-control", required = "required", min = "1", type = "number", step = "0.01" })
+        </div>
+
+        <button type="submit" class="custom-btn">Update</button>
+
+    }
+</div>
+
+<style>
+    body {
+        background-color: #fdfaf6;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2 {
+        color: #4C2918;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .container-edit {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 600;
+        color: black;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 10px 12px;
+        font-size: 15px;
+        box-shadow: none;
+        transition: border-color 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #8D6E63;
+            box-shadow: 0 0 5px rgba(141, 110, 99, 0.3);
+        }
+
+        .form-control:invalid {
+            border: 2px solid black;
+            color: black;
+        }
+
+            .form-control:invalid::placeholder {
+                color: black;
+                opacity: 0.6;
+            }
+
+    .custom-btn {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .custom-btn:hover {
+            background-color: #6d4c41;
+        }
+
+
+
+</style>

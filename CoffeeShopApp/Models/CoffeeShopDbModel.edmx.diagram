@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="b7ad8fad7d6f478e9a20d466a01a4c71" Name="Diagram1">
+        <EntityTypeShape EntityType="CoffeeShopDbModel.Inventory" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CoffeeShopDbModel.Auth" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="CoffeeShopDbModel.OrderItem" Width="1.5" PointX="4.875" PointY="0.5" />
+        <EntityTypeShape EntityType="CoffeeShopDbModel.Order" Width="1.5" PointX="2.625" PointY="0.75" />
+        <AssociationConnector Association="CoffeeShopDbModel.FK__OrderItem__Order__3E52440B" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
